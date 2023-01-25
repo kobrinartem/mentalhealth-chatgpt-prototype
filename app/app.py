@@ -4,8 +4,11 @@ import openai
 import boto3
 import json
 import time
+import ast
 # Create an SSM client using Boto3
 ssm = boto3.client('ssm')
+
+ecs = boto3.client('ecs')
 
 # Set SSM Parameter Store name for the OpenAI API key and the OpenAI Model Engine
 API_KEY_PARAMETER_PATH = '/openai/api_key'
@@ -87,17 +90,17 @@ def get_patient_message():
 def get_bot_message(json_message):
     # Try to parse the JSON message
     try:
-        message = json.loads(json_message)
+        message = ast.literal_eval(json_message)
     except Exception as e:
         print(e)
-        st.markdown(f'**BEGINNING DEBUG**\n{json_message}\n**END DEBUG**')
+        st.markdown(f'**BEGINNING DEBUG**\n```{json_message}```\n**END DEBUG**')
+        raise e
     message_dict = {
         "date": time.strftime("%Y-%m-%d, %H:%M:%S"),
         "role": "psychologist",
         "message": message["message"]
     }
-    return message_dict
-
+    return message_dict 
 
 # Create the history for the ChatGPT model
 def create_history(history):
@@ -120,4 +123,5 @@ if st.session_state['history']:
     history = st.session_state['history']
     for i in range(len(history)):
         item = history[i]
-        st.markdown(f'**{item["role"]} {item["date"]}#** {item["message"]}')
+        st.markdown(f'**{item["role"]} {item["date"]}#**')
+        st.markdown(f'{item["message"]}')
