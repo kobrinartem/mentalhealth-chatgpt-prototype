@@ -12,7 +12,8 @@ ecs = boto3.client('ecs')
 
 # Set SSM Parameter Store name for the OpenAI API key and the OpenAI Model Engine
 API_KEY_PARAMETER_PATH = '/openai/api_key'
-MODEL_ENGINE = "text-davinci-003"
+# MODEL_ENGINE = "text-davinci-003"
+MODEL_ENGINE = "davinci:ft-neurons-lab-2023-01-25-17-40-57"
 
 # history in dict format for the ChatGPT model
 history = [
